@@ -21,9 +21,23 @@ Gem::Specification.new do |s|
     ".document",
      ".gitignore",
      "LICENSE",
+     "README",
      "README.rdoc",
      "Rakefile",
-     "VERSION"
+     "VERSION",
+     "init.rb",
+     "install.rb",
+     "lib/lexer.rb",
+     "lib/obo_file.rb",
+     "lib/parser.rb",
+     "lib/tokens.rb",
+     "obo_parser.gemspec",
+     "tasks/obo_parser_tasks.rake",
+     "test/cell.obo",
+     "test/obo_1.0_test.txt",
+     "test/obo_1.0_test_wo_typedefs.txt",
+     "test/test_obo_parser.rb",
+     "uninstall.rb"
   ]
   s.homepage = %q{http://github.com/mjy/obo_parser}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -31,7 +45,7 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{A simple OBO file handler.}
   s.test_files = [
-    "test/obo_parser_test.rb"
+    "test/test_obo_parser.rb"
   ]
 
   if s.respond_to? :specification_version then
