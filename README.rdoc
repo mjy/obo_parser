@@ -1,6 +1,6 @@
 = obo_parser
 
-Description goes here.
+A simple OBO file format parsing library.
 
 == Note on Patches/Pull Requests
  
@@ -14,4 +14,4 @@ Description goes here.
 
 == Copyright
 
-Copyright (c) 2010 mjy. See LICENSE for details.
+Copyright (c) 2010 Matt Yoder. See LICENSE for details.
