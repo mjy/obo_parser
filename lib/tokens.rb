@@ -1,4 +1,4 @@
-module OboFile::Tokens
+module OboParser::Tokens
 
   class Token 
     # this allows access the the class attribute regexp, without using a class variable
@@ -147,13 +147,13 @@ module OboFile::Tokens
   # this list also defines priority, i.e. if tokens have overlap (which they shouldn't!!) then the earlier indexed token will match first
   def self.obo_file_token_list
     [ 
-      OboFile::Tokens::Term,
-      OboFile::Tokens::Typedef,
-      OboFile::Tokens::TagValuePair,
-      OboFile::Tokens::NameValuePair,  # not implemented
-      OboFile::Tokens::Dbxref,         # not implemented
-      OboFile::Tokens::LBracket,
-      OboFile::Tokens::EndOfFile
+      OboParser::Tokens::Term,
+      OboParser::Tokens::Typedef,
+      OboParser::Tokens::TagValuePair,
+      OboParser::Tokens::NameValuePair,  # not implemented
+      OboParser::Tokens::Dbxref,         # not implemented
+      OboParser::Tokens::LBracket,
+      OboParser::Tokens::EndOfFile
     ]   
   end
   

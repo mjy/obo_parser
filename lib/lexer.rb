@@ -1,4 +1,4 @@
-class OboFile::Lexer
+class OboParser::Lexer
   attr_reader :input
   def initialize(input)
     @input = input
@@ -17,7 +17,7 @@ class OboFile::Lexer
     token = read_next_token(token_class)
     @next_token = nil
     if token.class != token_class
-      raise(OboFile::ParseError,"expected #{token_class.to_s} but received #{token.class.to_s} at #{@input[0..10]}...", caller)
+      raise(OboParser::ParseError,"expected #{token_class.to_s} but received #{token.class.to_s} at #{@input[0..10]}...", caller)
     else
       return token
     end
@@ -34,13 +34,13 @@ class OboFile::Lexer
         return @next_token
       else
         # now check all the tokens for a match
-        OboFile::Tokens.obo_file_token_list.each {|t|
+        OboParser::Tokens.obo_file_token_list.each {|t|
           return @next_token if match(t)
         }
       end
        # no match, either end of string or lex-error
        if @input != ''
-           raise(OboFile::ParseError, "Lex Error, unknown token at #{@input[0..10]}...", caller)
+           raise(OboParser::ParseError, "Lex Error, unknown token at #{@input[0..10]}...", caller)
        else
         return nil
       end

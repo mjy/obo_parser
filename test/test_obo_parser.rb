@@ -2,7 +2,7 @@ require 'test/unit'
 require 'rubygems'
 require 'ruby-debug'
 
-require File.expand_path(File.join(File.dirname(__FILE__), '../lib/obo_file'))
+require File.expand_path(File.join(File.dirname(__FILE__), '../lib/obo_parser'))
 
 class OboParserTest < Test::Unit::TestCase
   def test_truth
@@ -10,9 +10,9 @@ class OboParserTest < Test::Unit::TestCase
   end
 end
 
-class Test_OboFileBuilder < Test::Unit::TestCase
+class Test_OboParserBuilder < Test::Unit::TestCase
   def test_builder
-    b = OboFile::OboFileBuilder.new
+    b = OboParser::OboParserBuilder.new
   end
 end
 
@@ -30,16 +30,16 @@ end
 class Test_Lexer < Test::Unit::TestCase
   
   def test_term
-     lexer = OboFile::Lexer.new("[Term]")
-     assert lexer.pop(OboFile::Tokens::Term)
+     lexer = OboParser::Lexer.new("[Term]")
+     assert lexer.pop(OboParser::Tokens::Term)
   end
   
   def test_end_of_file
-     lexer = OboFile::Lexer.new("    \n\n")
-     assert lexer.pop(OboFile::Tokens::EndOfFile)
+     lexer = OboParser::Lexer.new("    \n\n")
+     assert lexer.pop(OboParser::Tokens::EndOfFile)
   
-     lexer = OboFile::Lexer.new("\n")
-     assert lexer.pop(OboFile::Tokens::EndOfFile)
+     lexer = OboParser::Lexer.new("\n")
+     assert lexer.pop(OboParser::Tokens::EndOfFile)
   end
 
   def test_parse_term_stanza
@@ -49,37 +49,36 @@ class Test_Lexer < Test::Unit::TestCase
       def: "A chromatic scalar-circular quality inhering in an object that manifests in an observer by virtue of the dominant wavelength of the visible light; may be subject to fiat divisions, typically into 7 or 8 spectra." [PATOC:cjm]
       subset: attribute_slim
       is_a: PATO:0001301'
-    lexer = OboFile::Lexer.new(input)
-    assert t = lexer.pop(OboFile::Tokens::TagValuePair)
+    lexer = OboParser::Lexer.new(input)
+    assert t = lexer.pop(OboParser::Tokens::TagValuePair)
     assert_equal 'id', t.tag
     assert_equal 'PATO:0000015', t.value
 
-    assert t = lexer.pop(OboFile::Tokens::TagValuePair)
+    assert t = lexer.pop(OboParser::Tokens::TagValuePair)
     assert_equal 'name', t.tag
     assert_equal 'color hue', t.value
 
-    assert t = lexer.pop(OboFile::Tokens::TagValuePair)
+    assert t = lexer.pop(OboParser::Tokens::TagValuePair)
     assert_equal 'def', t.tag
     assert_equal '"A chromatic scalar-circular quality inhering in an object that manifests in an observer by virtue of the dominant wavelength of the visible light; may be subject to fiat divisions, typically into 7 or 8 spectra." [PATOC:cjm]', t.value
 
-    assert t = lexer.pop(OboFile::Tokens::TagValuePair)
+    assert t = lexer.pop(OboParser::Tokens::TagValuePair)
     assert_equal 'subset', t.tag
     assert_equal 'attribute_slim', t.value
 
-    assert t = lexer.pop(OboFile::Tokens::TagValuePair)
+    assert t = lexer.pop(OboParser::Tokens::TagValuePair)
     assert_equal 'is_a', t.tag
     assert_equal 'PATO:0001301', t.value
   end
 
-
   def test_parse_term
-     lexer = OboFile::Lexer.new("[Term]")
-     assert lexer.pop(OboFile::Tokens::Term)
+     lexer = OboParser::Lexer.new("[Term]")
+     assert lexer.pop(OboParser::Tokens::Term)
   end
 
   def test_tagvaluepair
-     lexer = OboFile::Lexer.new("id: PATO:0000179")
-     assert lexer.pop(OboFile::Tokens::TagValuePair)
+     lexer = OboParser::Lexer.new("id: PATO:0000179")
+     assert lexer.pop(OboParser::Tokens::TagValuePair)
   end
 end
 

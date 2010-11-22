@@ -4,14 +4,15 @@
 
 # outstanding issues:
 
-module OboFile
+module OboParser
 
 require File.expand_path(File.join(File.dirname(__FILE__), 'tokens'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'parser'))
 require File.expand_path(File.join(File.dirname(__FILE__), 'lexer'))
+require File.expand_path(File.join(File.dirname(__FILE__), 'utilities'))
 
 
-class OboFile # Node
+class OboParser # Node
   attr_accessor :terms, :typedefs
 
   def initialize
@@ -22,11 +23,16 @@ class OboFile # Node
   def term_strings
     @terms.collect{|t| t.name}.sort
   end
- 
+
+  # assumes terms are unique! 
   def term_hash
     @terms.inject({}) {|sum, t| sum.update(t.name => t.id)}
   end
- 
+
+  # ids are unique
+  def id_hash
+    @terms.inject({}) {|sum, t| sum.update(t.id => t.name)}
+  end
 
   class Stanza
     attr_accessor :name, :id, :tags
@@ -65,17 +71,17 @@ class OboFile # Node
 end
 
 
-class OboFileBuilder
+class OboParserBuilder
   def initialize
-    @of =  OboFile.new 
+    @of =  OboParser.new 
   end
 
   def add_term(tags)
-    @of.terms.push OboFile::Term.new(tags)
+    @of.terms.push OboParser::Term.new(tags)
   end
 
   def add_typedef(tags)
-    @of.typedefs.push OboFile::Typedef.new(tags)
+    @of.typedefs.push OboParser::Typedef.new(tags)
   end
 
   def obo_file
@@ -92,15 +98,16 @@ end # end module
 # the actual method
 def parse_obo_file(input)
   @input = input
-   raise(OboFile::ParseError, "Nothing passed to parse!") if  !@input ||  @input.size == 0
+   raise(OboParser::ParseError, "Nothing passed to parse!") if  !@input ||  @input.size == 0
 
   @input.gsub!(/(\s*?![^!'"]*?\n)/i, "\n")  # strip out comments - this is a kludge, likely needs fixing!!
     
-  builder = OboFile::OboFileBuilder.new
-  lexer = OboFile::Lexer.new(@input)
-  OboFile::Parser.new(lexer, builder).parse_file
+  builder = OboParser::OboParserBuilder.new
+  lexer = OboParser::Lexer.new(@input)
+  OboParser::Parser.new(lexer, builder).parse_file
   return builder.obo_file  
 end
+
 
 
 
