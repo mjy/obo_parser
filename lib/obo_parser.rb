@@ -15,22 +15,23 @@ require File.expand_path(File.join(File.dirname(__FILE__), 'utilities'))
 class OboParser # Node
   attr_accessor :terms, :typedefs
 
-  def initialize
+  def initialize # :yields: true
     @terms = []
     @typedefs = [] 
+    true
   end
 
-  def term_strings
+  def term_strings # :yields: Array of Strings
     @terms.collect{|t| t.name}.sort
   end
 
-  # assumes terms are unique! 
-  def term_hash
+  def term_hash # :yields: Hash (String => String) (name => id)
+    # Warning! This assumes terms are unqiue, they are not required to be so. 
     @terms.inject({}) {|sum, t| sum.update(t.name => t.id)}
   end
 
-  # ids are unique
-  def id_hash
+  def id_hash # :yields: Hash (String => String (id => name)
+    # ids are unique
     @terms.inject({}) {|sum, t| sum.update(t.id => t.name)}
   end
 
