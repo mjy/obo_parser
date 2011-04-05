@@ -56,4 +56,5 @@ class OboParser::Lexer
       return false
     end
   end
+
 end

@@ -1,6 +1,6 @@
 require 'rubygems'
 require 'ruby-debug'
-require 'obo_parser'
+require File.expand_path(File.join(File.dirname(__FILE__), 'obo_parser')) 
 
 module OboParser::Utilities
 
@@ -11,7 +11,6 @@ module OboParser::Utilities
 	#	of4 = File.read('hao4.obo')	
   #
   #  OboParser::Utilities::dump_comparison_by_id([of1, of2, of3, of4])
-
   def self.dump_comparison_by_id(files = []) # :yields: String
     of = [] 
     files.each_with_index do |f, i|
@@ -39,10 +38,9 @@ module OboParser::Utilities
     end
   end
 
+  # infile is a tab delimited 2 column file that contains IDs in the from FOO_1234
+  # The file is replicated to STDOUT replacing the ID with the Term
   def self.alignment_translate(infile = nil) # :yields: String
-    # infile is a tab delimited 2 column file that contains IDs in the from FOO_1234
-    # The file is replicated to STDOUT replacing the ID with the Term
-
     agreement = ARGV[0]
     raise "Provide a file with comparison." if agreement.nil? 
     comparison = File.read(agreement)
@@ -70,22 +68,15 @@ module OboParser::Utilities
             "\t" +
            (identifiers[v2].nil? ? 'NOT FOUND' : identifiers[v2]) 
     end
-
   end 
 
-
-  def self.shared_labels(files = []) # :yields: String
-
   # Returns labels found in all passed ontologies 
-
   # Usage:
-
-  # of1 = File.read('fly_anatomy.obo')	
-  # of2 = File.read('hao.obo')	
-  # of3 = File.read('mosquito_anatomy.obo')	
-
-  # shared_labels([of1, of6])
-
+  #  of1 = File.read('fly_anatomy.obo')	
+  #  of2 = File.read('hao.obo')	
+  #  of3 = File.read('mosquito_anatomy.obo')	
+  #  shared_labels([of1, of6])
+  def self.shared_labels(files = []) # :yields: String
     comparison = {}
 
     files.each do |f|
@@ -109,10 +100,8 @@ module OboParser::Utilities
     end
 
    puts  match.sort.join("\n")
-
    puts "\n#{match.length} total."
 
   end 
-
  
 end

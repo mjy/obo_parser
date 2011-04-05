@@ -5865,3 +5865,4 @@ is_a: CL:0000349 ! extraembryonic cell
 id: develops_from
 name: develops_from
 is_transitive: true
+

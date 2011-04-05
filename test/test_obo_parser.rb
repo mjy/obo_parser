@@ -2,7 +2,7 @@ require 'test/unit'
 require 'rubygems'
 require 'ruby-debug'
 
-require File.expand_path(File.join(File.dirname(__FILE__), '../lib/obo_parser'))
+require File.expand_path(File.join(File.dirname(__FILE__), '../lib/obo_parser')) 
 
 class OboParserTest < Test::Unit::TestCase
   def test_truth
@@ -16,15 +16,12 @@ class Test_OboParserBuilder < Test::Unit::TestCase
   end
 end
 
-
 class Test_Regex < Test::Unit::TestCase
 
-  def test_comment_stripping
-    # hackish, likely will fail with complex combinations of "!"
-    txt = "line without note\nBegin taxa; ! comment\n! not this line\n'this ok!'\n\"this too!!\""
-    r2 = Regexp.new(/(\s*?![^!'"]*?\n)/i)
-    assert_equal "line without note\nBegin taxa;\n\n'this ok!'\n\"this too!!\"" , txt.gsub(r2, "\n")    
+  def test_some_regex
+    assert true 
   end
+
 end
 
 class Test_Lexer < Test::Unit::TestCase
@@ -60,7 +57,8 @@ class Test_Lexer < Test::Unit::TestCase
 
     assert t = lexer.pop(OboParser::Tokens::TagValuePair)
     assert_equal 'def', t.tag
-    assert_equal '"A chromatic scalar-circular quality inhering in an object that manifests in an observer by virtue of the dominant wavelength of the visible light; may be subject to fiat divisions, typically into 7 or 8 spectra." [PATOC:cjm]', t.value
+    assert_equal 'A chromatic scalar-circular quality inhering in an object that manifests in an observer by virtue of the dominant wavelength of the visible light; may be subject to fiat divisions, typically into 7 or 8 spectra.', t.value
+    assert_equal(['PATOC:cjm'], t.xrefs) 
 
     assert t = lexer.pop(OboParser::Tokens::TagValuePair)
     assert_equal 'subset', t.tag
@@ -76,10 +74,27 @@ class Test_Lexer < Test::Unit::TestCase
      assert lexer.pop(OboParser::Tokens::Term)
   end
 
+  def test_xref_list
+     lexer = OboParser::Lexer.new("[foo:bar, stuff:things]") 
+     assert t = lexer.pop(OboParser::Tokens::XrefList)
+     hsh = {'foo' => 'bar', 'stuff' => 'things'} 
+     assert_equal hsh, t.value
+  end
+
   def test_tagvaluepair
      lexer = OboParser::Lexer.new("id: PATO:0000179")
      assert lexer.pop(OboParser::Tokens::TagValuePair)
   end
+
+  def test_tagvaluepair_with_comments_and_xrefs
+    lexer = OboParser::Lexer.new("def: \"The foo that is bar.\" [PATO:0000179] ! FOO! \n")
+    assert t = lexer.pop(OboParser::Tokens::TagValuePair)
+    assert_equal 'def', t.tag
+    assert_equal 'The foo that is bar.', t.value
+    assert_equal 'FOO!', t.comment
+    assert_equal(['PATO:0000179'], t.xrefs)
+  end
+ 
 end
 
 class Test_Parser < Test::Unit::TestCase
@@ -89,10 +104,13 @@ class Test_Parser < Test::Unit::TestCase
 
   def test_file_parsing
     foo = parse_obo_file(@of)
-    assert_equal 'pato', foo.terms[0].name
-    assert_equal 'quality', foo.terms[1].name
-    assert_equal 'part_of', foo.typedefs.last.name
-    assert_equal 'OBO_REL:part_of', foo.typedefs.last.id
+    assert_equal 'pato', foo.terms[0].name.value
+    assert_equal 'quality', foo.terms[1].name.value
+    assert_equal 'part_of', foo.typedefs.last.name.value
+    assert_equal 'OBO_REL:part_of', foo.typedefs.last.id.value
+    assert_equal(['PATOC:GVG'], foo.terms[1].def.xrefs)
+    assert_equal 'is_obsolete', foo.terms.first.tags_named('is_obsolete').first.tag
+    assert_equal 'true', foo.terms.first.tags_named('is_obsolete').first.value
   end
 
   def teardown
@@ -105,4 +123,10 @@ class Test_Parser < Test::Unit::TestCase
   end
 
 end 
+
+
+
+
+
+
 
