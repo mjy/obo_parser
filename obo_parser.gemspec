@@ -5,23 +5,21 @@
 
 Gem::Specification.new do |s|
   s.name = %q{obo_parser}
-  s.version = "0.2.1"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["mjy"]
-  s.date = %q{2011-04-04}
+  s.date = %q{2011-04-05}
   s.description = %q{Provides all-in-one object containing the contents of an OBO formatted file.  OBO version 1.2 is targeted, though this should work for 1.0. }
   s.email = %q{diapriid@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
-     "README",
      "README.rdoc"
   ]
   s.files = [
     ".document",
      ".gitignore",
      "LICENSE",
-     "README",
      "README.rdoc",
      "Rakefile",
      "VERSION",
