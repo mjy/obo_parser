@@ -1,4 +1,3 @@
-
 # uses the PhyloTree parser/lexer engine by Krishna Dole which in turn was based on
 # Thomas Mailund's <mailund@birc.dk> 'newick-1.0.5' Python library
 
@@ -37,7 +36,7 @@ module OboParser
 
     class Stanza
       # Make special reference to several specific types of tags (:name, :id), subclasses will remove additional special typs from :other_tags
-      attr_accessor :name, :id, :other_tags
+      attr_accessor :name, :id, :def, :other_tags
 
       def initialize(tags)
         @other_tags = []
@@ -56,6 +55,8 @@ module OboParser
             @id = new_tag
           when 'name'
             @name = new_tag
+          when 'def'
+            @def = new_tag
           else
             @other_tags.push(new_tag)
           end
@@ -75,24 +76,23 @@ module OboParser
 
     end
 
+    # TODO: likely deprecate and run with one model (Stanza)
     class Term < Stanza
-      attr_accessor :def
+  #   attr_accessor :some_term_specific_def
       def initialize(tags)
         super
-
-        anonymous_tags = [] 
-
-        # Loop through "unclaimed" tags and reference those specific to Term
-        while @other_tags.size != 0
-          t = @other_tags.shift
-          case t.tag
-          when 'def' 
-            @def = t
-          else
-            anonymous_tags.push(t)
-          end
-        end
-        @other_tags = anonymous_tags
+  #     anonymous_tags = [] 
+  #     # Loop through "unclaimed" tags and reference those specific to Term
+  #     while @other_tags.size != 0
+  #       t = @other_tags.shift
+  #       case t.tag
+  #       when 'def' 
+  #         @def = t
+  #       else
+  #         anonymous_tags.push(t)
+  #       end
+  #     end
+  #     @other_tags = anonymous_tags
       end
     end
 
