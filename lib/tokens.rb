@@ -18,11 +18,12 @@ module OboParser::Tokens
   end
 
   class TagValuePair < Token
-    attr_reader :tag, :comment, :xrefs
+    attr_reader :tag, :comment, :xrefs, :qualifier
     @regexp = Regexp.new(/\A\s*([^:]+:.+)\s*\n*/i) 
     def initialize(str)
       str.strip!
       tag, value = str.split(':',2)      
+      @tag = tag.strip
 
       value.strip!
 
@@ -43,14 +44,18 @@ module OboParser::Tokens
         @xrefs = xref_list.split(",") 
       end
 
-      @tag = tag.strip
-      @value = value.strip
+      if value =~ /\A\"/
+        value =~ /(".*")/
+        @value = $1
+        value.gsub!(@value, '')
+        @qualifier = value.strip
+      else
+        @value = value.strip
+        @qualifier = nil
+      end
 
-      @value = @value[1..-2] if @value[0..0] == "\"" # get rid of quote marks
-      @value = @value[1..-2] if @value[0..0] == "'"  # get rid of quote marks
-
-      @tag = @tag.strip
-      @value = @value.strip
+      @value = @value[1..-2].strip if @value[0..0] == "\"" # get rid of quote marks
+      @value = @value[1..-2].strip if @value[0..0] == "'"  # get rid of quote marks
     end
   end
 

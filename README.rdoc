@@ -1,6 +1,6 @@
 = obo_parser
 
-A simple Ruby gem for parsing OBO formatted ontology files.  Useful for reporting, comparing, and mapping data to other databases.  There is presently no functionality for logical inference across the ontology.
+A simple Ruby gem for parsing OBO 1.2 formatted ontology files.  Useful for reporting, comparing, and mapping data to other databases.  There is presently no functionality for logical inference across the ontology.
 
 == Installation
 
@@ -10,7 +10,7 @@ A simple Ruby gem for parsing OBO formatted ontology files.  Useful for reportin
 
     require 'rubygems'
     require 'obo_parser'
-    foo = parse_obo_file(File.read('my_ontology.obo'))  # => An OboParser instance.  Targets OBO v. 1.4
+    foo = parse_obo_file(File.read('my_ontology.obo'))  # => An OboParser instance  
     first_term = foo.terms.first                        # => An OboParser#Term instance 
     d = first_term.def                                  # => An OboParser#Tag instance
  

@@ -69,7 +69,7 @@ module OboParser
         return nil if tag_name.nil?
         result = []
         @other_tags.each do |t|
-          result.push t if t.tag == tag_name
+          result.push(t) if (t.tag == tag_name)
         end
         result
       end
@@ -115,7 +115,7 @@ module OboParser
     end
 
     class Tag
-      attr_accessor :tag, :value, :xrefs, :comment
+      attr_accessor :tag, :value, :xrefs, :comment, :qualifier
     end
 
   end

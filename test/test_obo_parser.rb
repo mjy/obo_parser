@@ -69,6 +69,24 @@ class Test_Lexer < Test::Unit::TestCase
     assert_equal 'PATO:0001301', t.value
   end
 
+  def test_parse_term_stanza2
+   input = '[Term]
+      id: CL:0000009
+      name: fusiform initial
+      alt_id: CL:0000274
+      def: "An elongated cell with approximately wedge-shaped ends, found in the vascular cambium, which gives rise to the elements of the axial system in the secondary vascular tissues." [ISBN:0471245208]
+      synonym: "xylem initial" RELATED []
+      synonym: "xylem mother cell" RELATED []
+      is_a: CL:0000272 ! cambial initial
+      is_a: CL:0000610 ! plant cell'
+
+    assert foo = parse_obo_file(input)
+    assert_equal 2, foo.terms.first.tags_named('synonym').size 
+    assert_equal 'xylem initial', foo.terms.first.tags_named('synonym').first.value
+    assert_equal 'xylem mother cell', foo.terms.first.tags_named('synonym')[1].value
+    assert_equal 'CL:0000274', foo.terms.first.tags_named('alt_id').first.value
+  end
+
   def test_parse_term
      lexer = OboParser::Lexer.new("[Term]")
      assert lexer.pop(OboParser::Tokens::Term)
@@ -94,7 +112,17 @@ class Test_Lexer < Test::Unit::TestCase
     assert_equal 'FOO!', t.comment
     assert_equal(['PATO:0000179'], t.xrefs)
   end
- 
+
+  def test_that_synonyms_parse
+    lexer = OboParser::Lexer.new("synonym: \"Nematoblast\" EXACT []\n")
+    assert t = lexer.pop(OboParser::Tokens::TagValuePair)
+    assert_equal 'synonym', t.tag
+    assert_equal 'Nematoblast', t.value
+    assert_equal 'EXACT', t.qualifier
+    assert_equal nil, t.comment
+    assert_equal([], t.xrefs)
+  end
+
 end
 
 class Test_Parser < Test::Unit::TestCase
@@ -113,6 +141,23 @@ class Test_Parser < Test::Unit::TestCase
     assert_equal 'true', foo.terms.first.tags_named('is_obsolete').first.value
   end
 
+  def test_complex_file_parsing
+    assert of = File.read(File.expand_path(File.join(File.dirname(__FILE__), '../test/cell.obo')) )
+    foo = parse_obo_file(of)
+    assert_equal 'cell', foo.terms.first.name.value
+    assert_equal 'primary cell line cell', foo.terms[1].name.value
+
+    tmp = foo.terms[9].tags_named('synonym')
+    assert_equal 2, tmp.size
+    assert_equal 'xylem initial', tmp.first.value
+    assert_equal 'xylem mother cell', tmp[1].value
+    assert_equal([], tmp[1].xrefs)
+
+    assert_equal 2, foo.terms[9].tags_named('is_a').size
+
+  end
+
+
   def teardown
     @of = nil
   end
@@ -123,10 +168,4 @@ class Test_Parser < Test::Unit::TestCase
   end
 
 end 
-
-
-
-
-
-
 
