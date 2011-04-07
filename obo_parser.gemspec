@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["mjy"]
-  s.date = %q{2011-04-06}
+  s.date = %q{2011-04-07}
   s.description = %q{Provides all-in-one object containing the contents of an OBO formatted file.  OBO version 1.2 is targeted, though this should work for 1.0. }
   s.email = %q{diapriid@gmail.com}
   s.extra_rdoc_files = [
