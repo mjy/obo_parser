@@ -40,7 +40,8 @@ module OboParser::Tokens
         value.gsub!(xref_list, '')
         xref_list.strip!
         xref_list = xref_list[1..-2] # strip []
-        @xrefs = xref_list.split(",") 
+        @xrefs = xref_list.split(",")
+        @xrefs.map(&:strip!)
       end
 
       if value =~ /\A\"/
