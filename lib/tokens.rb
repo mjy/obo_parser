@@ -23,8 +23,6 @@ module OboParser::Tokens
     def initialize(str)
       str.strip!
       tag, value = str.split(':',2)      
-      @tag = tag.strip
-
       value.strip!
 
       # Handle comments 
@@ -32,6 +30,7 @@ module OboParser::Tokens
         @comment = $1
         value.gsub!(@comment, '')
         @comment.gsub!(/\A!\s*/, '')
+        @comment.strip!
       end 
 
       # Break out the xrefs, could be made made robust 
@@ -56,6 +55,9 @@ module OboParser::Tokens
 
       @value = @value[1..-2].strip if @value[0..0] == "\"" # get rid of quote marks
       @value = @value[1..-2].strip if @value[0..0] == "'"  # get rid of quote marks
+
+      @tag = tag.strip
+      @value.strip!
     end
   end
 
