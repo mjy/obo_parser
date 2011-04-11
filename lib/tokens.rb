@@ -17,46 +17,101 @@ module OboParser::Tokens
     @regexp = Regexp.new(/\A\s*(\[typedef\])\s*/i)
   end
 
+  # Token eeds simplification, likely through creating additional tokens for quoted qualifiers, optional modifiers ({}), and the creation of individual
+  # tokens for individual tags that don't conform to the pattern used for def: tags.
+  # The code can't presently handle escaped characters (like \,), as bizzarely found in some OBO files.
   class TagValuePair < Token
-    attr_reader :tag, :comment, :xrefs, :qualifier
+    attr_reader :tag, :comment, :xrefs, :qualifier, :description
     @regexp = Regexp.new(/\A\s*([^:]+:.+)\s*\n*/i) 
     def initialize(str)
       str.strip!
       tag, value = str.split(':',2)      
       value.strip!
 
-      # Handle comments 
-      if value =~ /(!\s*.+)\Z/i
+      if tag == 'comment'
+        @tag = tag.strip
+        @value = value.strip
+        return
+      end
+
+      @xrefs = []
+
+      # Handle inline comments  
+      if value =~ /(\s+!\s*.+)\s*\n*\z/i
         @comment = $1
         value.gsub!(@comment, '')
-        @comment.gsub!(/\A!\s*/, '')
         @comment.strip!
+        @comment.gsub!(/\A!\s*/, '')
       end 
 
-      # Break out the xrefs, could be made made robust 
-      # Assumes non-quoted comma delimited in format 'foo:bar, stuff:things'
-      if value =~ /(\s*\[.*\]\s*)/i 
+      value.strip!
+
+      # Qualifier for the whole tag 
+      if value =~ /(\{[^{]*?\})\s*\n*\z/
+        @qualifier = $1
+        value.gsub!(@qualifier, '')
+        @qualifier.strip!
+      end 
+
+      value.strip!
+
+      # Handle a xref list TODO: Tokenize
+      if value =~ /(\[.*\])/i 
         xref_list = $1
         value.gsub!(xref_list, '')
+
         xref_list.strip!
-        xref_list = xref_list[1..-2] # strip []
-        @xrefs = xref_list.split(",")
-        @xrefs.map(&:strip!)
+        xref_list = xref_list[1..-2] # [] off
+
+        qq = 0 # some failsafes
+        while xref_list.length > 0
+          qq += 1
+          raise "#{xref_list}" if qq > 500
+          xref_list.gsub!(/\A\s*,\s*/, '')
+
+          xref_list =~ /\A(.+?:[^\"|\{|\,]+)/i 
+          v = $1
+
+          if !(v == "") && !v.nil? 
+            v.strip!
+            r = Regexp.escape v 
+            xref_list.gsub!(/\A#{r}\s*/, '')
+            @xrefs.push(v) if !v.nil?
+          end
+         
+          xref_list.strip!
+
+          # A description
+          if xref_list =~ /\A(\s*".*?")/i
+            d = $1
+            r = Regexp.escape d 
+            xref_list.gsub!(/\A#{r}/, '') 
+            xref_list.strip!
+          end
+
+          # A optional modifier
+          if xref_list =~ /\A(\s*\{[^\}]*?\})/ 
+            m = $1
+            r = Regexp.escape m
+            xref_list.gsub!(/\A#{r}/, '') 
+            xref_list.strip!
+          end
+
+          xref_list.strip!
+        end
       end
 
-      if value =~ /\A\"/
-        value =~ /(".*")/
-        @value = $1
-        value.gsub!(@value, '')
-        @qualifier = value.strip
+      value.strip!
+
+      # At this point we still might have a '"foo" QUALIFIER' combination
+      if value =~ /\A(\"[^\"]*\")\s+(.*)/
+        @value = $1.strip
+        @qualifier = $2.strip if !$2.nil?
       else
         @value = value.strip
-        @qualifier = nil
       end
-
-      @value = @value[1..-2].strip if @value[0..0] == "\"" # get rid of quote marks
-      @value = @value[1..-2].strip if @value[0..0] == "'"  # get rid of quote marks
-
+      
+      @value = @value[1..-2].strip if @value[0..0] == "\"" 
       @tag = tag.strip
       @value.strip!
     end
@@ -73,6 +128,51 @@ module OboParser::Tokens
       end
     end
   end
+
+  class RelationshipTag < Token
+    attr_reader :tag, :related_term, :relation, :comment, :xrefs #, :qualifier
+    @regexp = Regexp.new(/\A\s*relationship:\s*(.+)\s*\n*/i) #  returns key => value hash for tokens like 'foo=bar' or foo = 'b a ar'
+    def initialize(str)
+      @tag = 'relationship'
+      @xrefs = [] 
+      @relation, @related_term = str.split(/\s/,3)
+      
+      str =~ /\s+!\s+(.*)\s*\n*/i
+      @comment = $1
+
+      @comment ||= ""
+      [@relation, @related_term, @comment].map(&:strip!)
+    end
+  end
+
+  class IsATag < Token
+    attr_reader :tag, :related_term, :relation, :comment, :xrefs #, :qualifier
+    @regexp = Regexp.new(/\A\s*is_a:\s*(.+)\s*\n*/i) #  returns key => value hash for tokens like 'foo=bar' or foo = 'b a ar'
+    def initialize(str)
+      @tag = 'relationship'
+      @relation = 'is_a'
+      @related_term, @comment = str.split(/\s/,2)
+      @comment ||= ""
+      @comment.gsub!(/\A!\s*/, '')
+      [@relation, @related_term, @comment].map(&:strip!)
+      @xrefs = [] 
+    end
+  end
+
+  class DisjointFromTag < Token
+    attr_reader :tag, :related_term, :relation, :comment, :xrefs #, :qualifier
+    @regexp = Regexp.new(/\A\s*disjoint_from:\s*(.+)\s*\n*/i) #  returns key => value hash for tokens like 'foo=bar' or foo = 'b a ar'
+    def initialize(str)
+      @tag = 'relationship'
+      @relation = 'disjoint_from'
+      @related_term, @comment = str.split(/\s/,2)
+      @comment ||= ""
+      @comment.gsub!(/\A!\s*/, '')
+      [@relation, @related_term, @comment].map(&:strip!)
+      @xrefs = [] 
+    end
+  end
+
 
   class NameValuePair < Token
     @regexp = Regexp.new('fail')
@@ -168,6 +268,9 @@ module OboParser::Tokens
       OboParser::Tokens::Term,
       OboParser::Tokens::Typedef,
       OboParser::Tokens::LBracket,
+      OboParser::Tokens::DisjointFromTag,
+      OboParser::Tokens::IsATag,
+      OboParser::Tokens::RelationshipTag,
       OboParser::Tokens::TagValuePair,
       OboParser::Tokens::XrefList,
       OboParser::Tokens::EndOfFile

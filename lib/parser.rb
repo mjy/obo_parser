@@ -6,23 +6,24 @@ class OboParser::Parser
 
   def parse_file
     # At present we ignore the header lines
-    while !@lexer.peek(OboParser::Tokens::Term)
+    while !@lexer.peek(OboParser::Tokens::Term) && !@lexer.peek(OboParser::Tokens::Typedef)
       @lexer.pop(OboParser::Tokens::TagValuePair)
     end
 
     i = 0
     while !@lexer.peek(OboParser::Tokens::Typedef) && !@lexer.peek(OboParser::Tokens::EndOfFile)
-      raise OboParser::ParseError, "infinite loop in Terms" if i > 10000000 # there aren't that many words! 
+      raise OboParser::ParseError, "infinite loop in Terms?" if i > 20000 # there aren't that many words! 
       parse_term
       i += 1
     end
 
     i = 0
     while @lexer.peek(OboParser::Tokens::Typedef) 
-      raise OboParser::ParseError,"infinite loop in Typedefs" if i > 1000000 
+      raise OboParser::ParseError,"infinite loop in Typedefs?" if i > 20000 
       parse_typedef
       i += 1
     end    
+
   end
 
   def parse_term
@@ -30,8 +31,18 @@ class OboParser::Parser
     tags = []
     while !@lexer.peek(OboParser::Tokens::Term) && !@lexer.peek(OboParser::Tokens::Typedef) && !@lexer.peek(OboParser::Tokens::EndOfFile) 
       begin
-        t = @lexer.pop(OboParser::Tokens::TagValuePair)
+        
+        if @lexer.peek(OboParser::Tokens::IsATag) 
+          t = @lexer.pop(OboParser::Tokens::IsATag)
+        elsif @lexer.peek(OboParser::Tokens::DisjointFromTag) 
+          t = @lexer.pop(OboParser::Tokens::DisjointFromTag)
+        elsif @lexer.peek(OboParser::Tokens::RelationshipTag) 
+          t = @lexer.pop(OboParser::Tokens::RelationshipTag)
+        else 
+          t = @lexer.pop(OboParser::Tokens::TagValuePair)
+        end
         tags.push(t) 
+
       rescue 
         raise 
       end

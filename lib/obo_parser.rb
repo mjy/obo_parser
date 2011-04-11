@@ -34,6 +34,12 @@ module OboParser
       @terms.inject({}) {|sum, t| sum.update(t.id.value => t.name.value)}
     end
 
+    # A single line in a Stanza within an OBO file
+    class Tag
+      attr_accessor :tag, :value, :xrefs, :comment, :qualifier, :related_term, :relation
+    end
+    
+    # A collection of single lines (Tags)
     class Stanza
       # Make special reference to several specific types of tags (:name, :id), subclasses will remove additional special typs from :other_tags
       attr_accessor :name, :id, :def, :other_tags
@@ -45,10 +51,11 @@ module OboParser
           t = tags.shift
 
           new_tag = OboParser::Tag.new
+    
           new_tag.tag = t.tag
           new_tag.value = t.value
           new_tag.comment = t.comment
-          new_tag.xrefs = t.xrefs
+          new_tag.xrefs = t.xrefs 
 
           case new_tag.tag
           when 'id' 
@@ -58,6 +65,11 @@ module OboParser
           when 'def'
             @def = new_tag
           else
+            if new_tag.tag == 'relationship'
+              new_tag.related_term = t.related_term
+              new_tag.relation = t.relation
+            end
+
             @other_tags.push(new_tag)
           end
         end
@@ -78,21 +90,23 @@ module OboParser
 
     # TODO: likely deprecate and run with one model (Stanza)
     class Term < Stanza
-  #   attr_accessor :some_term_specific_def
+     attr_accessor :relationships
       def initialize(tags)
-        super
-  #     anonymous_tags = [] 
-  #     # Loop through "unclaimed" tags and reference those specific to Term
-  #     while @other_tags.size != 0
-  #       t = @other_tags.shift
-  #       case t.tag
-  #       when 'def' 
-  #         @def = t
-  #       else
-  #         anonymous_tags.push(t)
-  #       end
-  #     end
-  #     @other_tags = anonymous_tags
+       super
+       @relationships = [] 
+       anonymous_tags = [] 
+       # Loop through "unclaimed" tags and reference those specific to Term
+       while @other_tags.size != 0
+         t = @other_tags.shift
+         case t.tag
+        
+         when 'relationship'
+           @relationships.push([t.relation, t.related_term])
+         else
+           anonymous_tags.push(t)
+         end
+       end
+       @other_tags = anonymous_tags
       end
     end
 
@@ -112,10 +126,6 @@ module OboParser
         #  @other_tags = anonymous_tags
         #end
       end
-    end
-
-    class Tag
-      attr_accessor :tag, :value, :xrefs, :comment, :qualifier
     end
 
   end

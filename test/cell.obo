@@ -2979,7 +2979,7 @@ is_a: CL:0000412 ! polyploid cell
 [Term]
 id: CL:0000418
 name: arcade cell
-def: "An epithelial cell found in C. elegans that firmly hold the outer body wall and the lips to the inner cylinder of the pharynx in a manner that keeps these organs from breaking apart, while still giving each organ freedom of movement during feeding." [GOC:tf\,, http://www.wormatlas.org/ver1/handbook/hypodermis/hypsupportother.htm#arcadecells]
+def: "An epithelial cell found in C. elegans that firmly hold the outer body wall and the lips to the inner cylinder of the pharynx in a manner that keeps these organs from breaking apart, while still giving each organ freedom of movement during feeding." [GOC:tf, http://www.wormatlas.org/ver1/handbook/hypodermis/hypsupportother.htm#arcadecells]
 is_a: CL:0000066 ! epithelial cell
 
 [Term]

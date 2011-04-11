@@ -30,13 +30,17 @@ A simple Ruby gem for parsing OBO 1.2 formatted ontology files.  Useful for repo
     first_typdef.id.value                               # => 'Some typedef id'
     first_typdef.name.value                             # => 'Some typedef name'
 
-    foo.terms.first.tags_named('is_a')                  # => [OboParser#Tag, ... ]
-    foo.terms.first.tags_named('is_a').first.tag        # => 'is_a'
-    foo.terms.first.tags_named('is_a').first.value      # => 'Some Term id'
+    foo.terms.first.tags_named('synonym')               # => [OboParser#Tag, ... ]
+    foo.terms.first.tags_named('synonym').first.tag     # => 'synonym'
+    foo.terms.first.tags_named('synonym').first.value   # => 'Some label'
+
+    foo.terms.first.relationships                       # => [['relation_ship', 'FOO:123'], ['other_relationship', 'FOO:456'] ...] An array of [relation, related term id], includes 'is_a', 'disjoint_from' and Typedefs
 
 See also /test/test_obo_parser.rb
 
 == Utilties
+
+!! UTILTIES ARE PRESENTLY BORKED !!
 
 A small set of methods (e.g. comparing OBO ontologies) utilizing the gem are included in utilities.rb. See /lib/utilities.rb.  For example, shared labels across sets of ontologies can be found and returned.
 
