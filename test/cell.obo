@@ -4365,7 +4365,7 @@ is_a: CL:0000255 ! eukaryotic cell
 [Term]
 id: CL:0000611
 name: eosinophil progenitor cell
-comment: These cells are CD34-positive, CD45RA-negative, CD71-negative, and lineage-negative (CD2, CD3 epsilon, CD4, CD5, CD8a, CD14, CD19, CD20, integrin alpha-M, NCAM-1, SCA¿1, Ly6G, Ly76).
+comment: These cells are CD34-positive, CD45RA-negative, CD71-negative, and lineage-negative (CD2, CD3 epsilon, CD4, CD5, CD8a, CD14, CD19, CD20, integrin alpha-M, NCAM-1, SCAÂ¿1, Ly6G, Ly76).
 synonym: "CFU-Eo" RELATED []
 synonym: "colony forming unit eosinophil" RELATED []
 synonym: "EoP" EXACT [PMID:15955840, PMID:19114669]

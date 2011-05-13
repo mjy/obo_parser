@@ -1,7 +1,7 @@
 module OboParser::Tokens
 
   class Token 
-    # this allows access the the class attribute regexp, without using a class variable
+    # this allows access the to class attribute regexp, without using a class variable
     class << self; attr_reader :regexp; end
     attr_reader :value    
     def initialize(str)
