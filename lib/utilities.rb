@@ -10,7 +10,7 @@ module OboParser::Utilities
 	#	of3 = File.read('hao3.obo')	
 	#	of4 = File.read('hao4.obo')	
   #
-  #  OboParser::Utilities::dump_comparison_by_id([of1, of2, of3, of4])
+  # OboParser::Utilities::dump_comparison_by_id([of1, of2, of3, of4])
   def self.dump_comparison_by_id(files = []) # :yields: String
     of = [] 
     files.each_with_index do |f, i|

@@ -99,7 +99,6 @@ class Test_Lexer < Test::Unit::TestCase
     assert_equal 2, foo.terms.first.relationships.size 
     assert_equal(['CL:0000272', 'CL:0000610'], foo.terms.first.relationships.collect{|r| r[1]}.sort)
     assert_equal(['is_a', 'is_a'], foo.terms.first.relationships.collect{|r| r[0]}.sort)
-
   end
 
   def test_parse_term
@@ -220,6 +219,54 @@ class Test_Parser < Test::Unit::TestCase
 
     assert_equal 2, foo.terms[9].relationships.size
   end
+
+  def test_complex_file_parsing2
+    assert of = File.read(File.expand_path(File.join(File.dirname(__FILE__), '../test/hao.obo')) )
+    foo = parse_obo_file(of)
+    assert_equal 'anatomical entity', foo.terms.first.name.value
+    assert_equal 'ventral mesofurco-profurcal muscle', foo.terms[1].name.value
+
+   #tmp = foo.terms[9].tags_named('synonym')
+   #assert_equal 2, tmp.size
+   #assert_equal 'xylem initial', tmp.first.value
+   #assert_equal 'xylem mother cell', tmp[1].value
+   #assert_equal([], tmp[1].xrefs)
+
+   #assert_equal 2, foo.terms[9].relationships.size
+  end
+
+  def test_complex_file_parsing3
+    assert of = File.read(File.expand_path(File.join(File.dirname(__FILE__), '../test/tgma.obo')) )
+    foo = parse_obo_file(of)
+   # assert_equal 'anatomical entity', foo.terms.first.name.value
+   # assert_equal 'ventral mesofurco-profurcal muscle', foo.terms[1].name.value
+
+   #tmp = foo.terms[9].tags_named('synonym')
+   #assert_equal 2, tmp.size
+   #assert_equal 'xylem initial', tmp.first.value
+   #assert_equal 'xylem mother cell', tmp[1].value
+   #assert_equal([], tmp[1].xrefs)
+
+   #assert_equal 2, foo.terms[9].relationships.size
+  end
+
+  def test_complex_file_parsing4
+   assert of = File.read(File.expand_path(File.join(File.dirname(__FILE__), '../test/go.obo')) )
+   foo = parse_obo_file(of)
+   # assert_equal 'anatomical entity', foo.terms.first.name.value
+   # assert_equal 'ventral mesofurco-profurcal muscle', foo.terms[1].name.value
+
+   #tmp = foo.terms[9].tags_named('synonym')
+   #assert_equal 2, tmp.size
+   #assert_equal 'xylem initial', tmp.first.value
+   #assert_equal 'xylem mother cell', tmp[1].value
+   #assert_equal([], tmp[1].xrefs)
+
+   #assert_equal 2, foo.terms[9].relationships.size
+  end
+
+
+
 
   def test_file_completes_without_typedefs
     @of2 = File.read(File.expand_path(File.join(File.dirname(__FILE__), '../test/obo_1.0_test_wo_typedefs.txt')) )
