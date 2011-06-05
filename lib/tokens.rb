@@ -17,7 +17,7 @@ module OboParser::Tokens
     @regexp = Regexp.new(/\A\s*(\[typedef\])\s*/i)
   end
 
-  # Token eeds simplification, likely through creating additional tokens for quoted qualifiers, optional modifiers ({}), and the creation of individual
+  # Token needs simplification, likely through creating additional tokens for quoted qualifiers, optional modifiers ({}), and the creation of individual
   # tokens for individual tags that don't conform to the pattern used for def: tags.
   # The code can't presently handle escaped characters (like \,), as bizzarely found in some OBO files.
   class TagValuePair < Token
@@ -66,6 +66,7 @@ module OboParser::Tokens
         qq = 0 # some failsafes
         while xref_list.length > 0
           qq += 1
+          debugger if qq == 499
           raise "#{xref_list}" if qq > 500
           xref_list.gsub!(/\A\s*,\s*/, '')
 
