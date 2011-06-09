@@ -47,9 +47,6 @@ See also /test/test_obo_parser.rb
 
 == Utilties
 
-/lib/utilities.rb includes a very rapidly changing set of examples of how the library is being used.  
-!! UTILTIES ARE PRESENTLY BORKED !!
-
 A small set of methods (e.g. comparing OBO ontologies) utilizing the gem are included in /lib/utilities.rb.  For example, shared labels across sets of ontologies can be found and returned.
 
 == Documentation
