@@ -81,7 +81,7 @@ module OboParser::Utilities
       end
     end
 
-    puts  match.sort.join("\n")
+    puts match.sort.join("\n")
     puts "\n#{match.length} total."
 
   end 
@@ -112,7 +112,6 @@ is_anti_symmetric: true
   #  file = File.read('HAO_TGMA_list.txt')
   #  col1_obo = File.read('hao.obo')
   #  col2_obo = File.read('tgma.obo')
-  #  column_translate(:data => file, :col1_obo => col1_obo, :col2_obo => col2_obo, :output => :homolonto)
   #  
   #  OboParser::Utilities.column_translate(:data => file, :col1_obo => col1_obo, :col2_obo => col2_obo, :output => :homolonto)
   #== Output types
@@ -129,8 +128,9 @@ is_anti_symmetric: true
       :data => nil,
       :col1_obo => nil,
       :col2_obo => nil,
-      :translate_to => :id,    # also :label
-      :output => :cols,        # also :xls, :homolonto
+      :translate_to => :id,        # also :label
+      :output => :cols,            # also :xls, :homolonto, :parent_match
+      :parent_match_to => :is_a,   # only used when :output == :parent_match
       :output_filename => 'foo',
       :index_start => 0
     }.merge!(options)
@@ -212,6 +212,65 @@ is_anti_symmetric: true
     true
   end
 
+  # Takes a two column input file, references it to two ontologies, and returns a hash
+  #  
+  #== Example use
+  #  file = File.read('HAO_TGMA_list.txt')
+  #  col1_obo = File.read('hao.obo')
+  #  col2_obo = File.read('tgma.obo')
+  #  
+  #  OboParser::Utilities.hashify_pairs(:data => file, :col1_obo => col1_obo, :col2_obo => col2_obo)
+  #
+  # @param [Hash] options options.
+  # @param [Symbol] data the two column data file.
+  # @param [Symbol] colo1_obo the OBO file referenced in the first column 
+  # @param [Symbol] colo2_obo the OBO file referenced in the second column 
+  # @return [Hash] a hash of {id string => id string}
+  def self.hashify_pairs(options = {})
+    opt = {
+      :data => nil,
+      :col1_obo => nil,
+      :col2_obo => nil,
+    }.merge!(options)
+    
+    c1obo = parse_obo_file(opt[:col1_obo])
+    c2obo = parse_obo_file(opt[:col2_obo])
+
+    hash = Hash.new
+
+    i = opt[:index_start]
+    v1 = nil # a label like 'head'
+    v2 = nil
+    c1 = nil # an id 'FOO:123'
+    c2 = nil
+
+    opt[:data].split(/\n/).each do |row|
+      i += 1
+      c1, c2 =  row.split(/\t/).map(&:strip)
+
+      if c1.nil? || c2.nil?
+        next
+      end
+
+      # the conversion
+      if c1 =~ /.*\:.*/ # it's an id, leave it
+        v1 = c1
+      else
+        v1 = c1obo.term_hash[c1]
+      end
+      if c2 =~ /.*\:.*/ 
+        v2 = c2
+      else
+        v2 = c2obo.term_hash[c2]
+      end
+   
+     hash.merge!(c1 => c2) 
+    
+    end
+    return hash
+  end
+
+
   # Returns a HomolOnto Stanza  
   #
   # @param [String] id an externally tracked id for the id: tag like '00001' 
@@ -229,6 +288,143 @@ is_anti_symmetric: true
     end
     s.join("\n")
   end
+
+
+# Takes a Hash of OBO ontology files, an Array of relationships, and writes two input files (a network, and node properties) for Cytoscape
+#  
+#== Example use
+# OboParser::Utilities.cytoscapify(:ontologies => {'HAO' => File.read('input/hao.obo'), 'TADS' => File.read('input/tads.obo'), 'TGMA' => File.read('input/tgma.obo'), 'FBBT' => File.read('input/fbbt.obo') }, :properties => ['is_a', 'part_of'])
+#
+# @param [Symbol] ontologies a Hash of #read files as values, keys as working names
+# @param [Symbol] properties an Array of properties like ['is_a', 'part_of'] 
+# TODO: @return File1, File2, Filen  
+def self.cytoscapify(options = {})
+  opt = {
+    :ontologies => {},
+    :properties => []
+  }.merge!(options)
+
+  return false if opt[:properties].empty?
+  return false if opt[:ontologies].empty?
+
+  nodes = File.new("nodes.tab", "w+")
+  edges = File.new("edges.eda", "w+")
+
+  opt[:ontologies].keys.each do |k|
+
+    obo_file = parse_obo_file(opt[:ontologies][k])
+
+    obo_file.terms.each do |t|
+      nodes.puts [t.id.value, t.name.value, k].join("\t") + "\n"
+
+      t.relationships.each do |rel, id|
+        edges.puts [t.id.value, "(#{rel})", id].join("\t") + "\n" if opt[:properties].include?(rel)
+      end
+    end
+  end
+
+  nodes.close
+  edges.close
+
+  true
+
+end
+
+
+# Takes a two column input file, references it to two ontologies, and returns a report 
+# that identifies data pairs that have parents who are also a data pair given a 
+# provided property/relation type.
+#  
+#== Example use
+#  file = File.read('HAO_TGMA_list.txt')
+#  col1_obo = File.read('hao.obo')
+#  col2_obo = File.read('tgma.obo')
+#
+# foo = OboParser::Utilities.parents(:data => data, :col1_obo => col1_obo, :col2_obo => col2_obo, :property => 'is_a')
+#
+# puts "-- NO (#{foo[:no].size})\n" 
+# puts foo[:no].join("\n")
+# puts "-- YES (#{foo[:yes].size})\n" 
+# puts foo[:yes].join("\n")
+#
+# @param [Hash] options options.
+# @param [Symbol] data the two column data file.
+# @param [Symbol] colo1_obo the OBO file referenced in the first column 
+# @param [Symbol] colo2_obo the OBO file referenced in the second column 
+# @param [Symbol] property the OBO relationship/property to check against (e.g. 'is_a', 'part_of') 
+# @return [Hash] a hash of {:yes => {}, :no => {}}
+def self.parents(options = {})
+  opt = {
+    :data => nil,
+    :col1_obo => nil,
+    :col2_obo => nil,
+    :property => nil
+  }.merge!(options)
+
+  return false if opt[:property].nil? 
+  c1obo = parse_obo_file(opt[:col1_obo])
+  c2obo = parse_obo_file(opt[:col2_obo])
+
+  result = {:yes => [], :no => [], :unplaced => []}
+  # update
+  hash =  hashify_pairs(:data => opt[:data], :col1_obo => opt[:col1_obo], :col2_obo =>  opt[:col2_obo])
+
+  obo1_hash = c1obo.id_index
+  obo2_hash = c2obo.id_index
+
+  hash.keys.each do |k|
+    a = k
+    b = hash[a]
+
+    ids_1 = []
+    ids_2 = []
+
+    if !obo1_hash[a]
+      puts "can't find #{k}\n"
+      next
+    end
+
+    if !obo2_hash[b]
+      puts "can't find #{k}\n"
+      next
+    end
+
+    obo1_hash[a].relationships.each do |rel, id| 
+      if rel == opt[:property] 
+        ids_1.push id
+      end
+    end
+
+    obo2_hash[b].relationships.each do |rel, id|
+      if rel == opt[:property] 
+        ids_2.push id
+      end
+    end
+
+    unplaced = true
+
+    ids_1.each do |c|
+      ids_2.each do |d|
+        t = "#{a} -> #{b}"
+        if hash[c] == d
+          result[:yes].push(t)
+          unplaced = false
+          next # don't add again after we find a hit
+        else
+          result[:no].push(t)
+          unplaced = false
+        end
+      end
+    end
+    result[:unplaced] 
+
+  end
+
+  result
+end
+
+
+
 
 #== Helper methods that don't require the obo_parser library
 

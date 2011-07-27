@@ -26,12 +26,23 @@ module OboParser
     end
 
     # Warning! This assumes terms are unique, they are NOT required to be so in an OBO file.
+    # Ignores hash colisions!!
     def term_hash # :yields: Hash (String => String) (name => id)
       @terms.inject({}) {|sum, t| sum.update(t.name.value => t.id.value)}
     end
 
-    def id_hash # :yields: Hash (String => String (id => name))
+    # Returns a hash of 'id:012345' => 'term label'
+    #  
+    # @return [Hash] a hash of {id => string} for the file
+    def id_hash
       @terms.inject({}) {|sum, t| sum.update(t.id.value => t.name.value)}
+    end
+
+    # Returns a hash of 'id:012345' => Term
+    #  
+    # @return [Hash] a hash of {id => Term} for the file
+    def id_index 
+      @terms.inject({}) {|sum, t| sum.update(t.id.value => t)}
     end
 
     # A single line in a Stanza within an OBO file
@@ -108,6 +119,10 @@ module OboParser
        end
        @other_tags = anonymous_tags
       end
+   
+      #def relationships_of_type(reltype = nil) 
+      #  return [] if reltype.nil?
+      #end 
     end
 
     class Typedef < Stanza
@@ -159,9 +174,6 @@ end # end module
 def parse_obo_file(input)
   @input = input
   raise(OboParser::ParseError, "Nothing passed to parse!") if !@input || @input.size == 0
-
-  # Comments are handled now.
-  # @input.gsub!(/(\s*?![^!'"]*?\n)/i, "\n")  # strip out comments - this is a kludge, likely needs fixing!!
 
   builder = OboParser::OboParserBuilder.new
   lexer = OboParser::Lexer.new(@input)
