@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    obo_parser (0.3.9)
+    obo_parser (0.4.0)
       rake (~> 11.1.2)
 
 GEM
