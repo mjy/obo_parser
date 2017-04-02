@@ -142,7 +142,6 @@ module OboParser
         #end
       end
     end
-
   end
 
   class OboParserBuilder
@@ -161,7 +160,6 @@ module OboParser
     def obo_file
       @of
     end
-
   end
 
   class ParseError < StandardError
