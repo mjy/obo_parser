@@ -1,5 +1,5 @@
-
-[https://secure.travis-ci.org/mjy/obo_parser.png?branch=master](http://travis-ci.org/mjy/obo_parser?branch=master)
+[![Build Status](https://travis-ci.org/mjy/obo_parser.svg?branch=master)](https://travis-ci.org/mjy/obo_parser)
+[![Dependency Status](https://gemnasium.com/badges/github.com/mjy/obo_parser.svg)](https://gemnasium.com/github.com/mjy/obo_parser)
 
 # obo_parser
 
