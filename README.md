@@ -12,8 +12,6 @@ A simple Ruby gem for parsing OBO 1.2 (?4) formatted ontology files.  Useful for
 ## Use
 
 ### General 
-
-    require 'rubygems'
     require 'obo_parser'
     o = parse_obo_file(File.read('my_ontology.obo'))  # => An OboParser instance  
     first_term = o.terms.first                        # => An OboParser#Term instance 
