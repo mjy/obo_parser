@@ -242,7 +242,7 @@ describe OboParser do
 
   specify 'complex_file_parsing_3' do
     expect(of = File.read(File.expand_path(File.join(File.dirname(__FILE__), '../files/tgma.obo')) ) ).to be_truthy
-    expect(foo = parse_obo_file(of)).to be_truthy
+    expect(parse_obo_file(of)).to be_truthy
 
     # assert_equal 'anatomical entity', foo.terms.first.name.value
     # assert_equal 'ventral mesofurco-profurcal muscle', foo.terms[1].name.value
@@ -266,7 +266,7 @@ describe OboParser do
 
   specify 'file_completes_without_typedefs' do
     expect(of2 = File.read(File.expand_path(File.join(File.dirname(__FILE__), '../files/obo_1.0_test_wo_typedefs.txt')) )).to be_truthy
-    expect(foo = parse_obo_file(of2)).to be_truthy
+    expect(parse_obo_file(of2)).to be_truthy
   end
 
 end

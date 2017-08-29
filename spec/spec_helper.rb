@@ -3,7 +3,7 @@ require 'bundler/setup'
 Bundler.setup
 
 require 'obo_parser'
-require 'byebug'
+require 'pry'
 require 'awesome_print'
 require 'fileutils'
 

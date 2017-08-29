@@ -1,14 +1,13 @@
 PATH
   remote: .
   specs:
-    obo_parser (0.4.0)
+    obo_parser (0.4.1)
       rake (~> 11.1.2)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    awesome_print (1.7.0)
-    byebug (9.0.6)
+    awesome_print (1.8.0)
     coderay (1.1.1)
     diff-lcs (1.3)
     ffi (1.9.18)
@@ -45,19 +44,19 @@ GEM
     rb-fsevent (0.9.8)
     rb-inotify (0.9.8)
       ffi (>= 0.5.0)
-    rspec (3.5.0)
-      rspec-core (~> 3.5.0)
-      rspec-expectations (~> 3.5.0)
-      rspec-mocks (~> 3.5.0)
-    rspec-core (3.5.4)
-      rspec-support (~> 3.5.0)
-    rspec-expectations (3.5.0)
+    rspec (3.6.0)
+      rspec-core (~> 3.6.0)
+      rspec-expectations (~> 3.6.0)
+      rspec-mocks (~> 3.6.0)
+    rspec-core (3.6.0)
+      rspec-support (~> 3.6.0)
+    rspec-expectations (3.6.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.5.0)
-    rspec-mocks (3.5.0)
+      rspec-support (~> 3.6.0)
+    rspec-mocks (3.6.0)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.5.0)
-    rspec-support (3.5.0)
+      rspec-support (~> 3.6.0)
+    rspec-support (3.6.0)
     ruby_dep (1.5.0)
     shellany (0.0.1)
     slop (3.6.0)
@@ -67,12 +66,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  awesome_print (~> 1.6)
+  awesome_print (~> 1.8)
   bundler (~> 1.5)
-  byebug
   guard-rspec
   obo_parser!
-  rspec (~> 3.4)
+  pry
+  rspec (~> 3.6)
 
 BUNDLED WITH
-   1.14.3
+   1.15.4

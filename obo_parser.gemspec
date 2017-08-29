@@ -5,7 +5,7 @@ require 'obo_parser/version'
 
 Gem::Specification.new do |spec|
   spec.name = 'obo_parser'
-  spec.version = OboParser::VERSION # "0.3.8"
+  spec.version = OboParser::VERSION 
 
   spec.authors = ["Matt Yoder"]
   spec.email = ["diapriid@gmail.com"]
@@ -18,11 +18,11 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'rake', '~> 11.1.2'
-  spec.add_development_dependency 'rspec', '~> 3.4'
+  spec.add_development_dependency 'rspec', '~> 3.6'
   spec.add_development_dependency 'bundler', '~> 1.5'
   spec.add_development_dependency 'guard-rspec'
-  spec.add_development_dependency 'byebug'
-  spec.add_development_dependency 'awesome_print', '~> 1.6'
+  spec.add_development_dependency 'pry'
+  spec.add_development_dependency 'awesome_print', '~> 1.8'
 
 end
 

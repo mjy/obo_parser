@@ -4,7 +4,7 @@ A simple Ruby gem for parsing OBO 1.2 (?4) formatted ontology files.  Useful for
 
 ## Installation
 
-  gem install obo_parser
+    gem install obo_parser
 
 ## Use
 
@@ -12,8 +12,8 @@ A simple Ruby gem for parsing OBO 1.2 (?4) formatted ontology files.  Useful for
 
     require 'rubygems'
     require 'obo_parser'
-    foo = parse_obo_file(File.read('my_ontology.obo'))  # => An OboParser instance  
-    first_term = foo.terms.first                        # => An OboParser#Term instance 
+    o = parse_obo_file(File.read('my_ontology.obo'))  # => An OboParser instance  
+    first_term = o.terms.first                        # => An OboParser#Term instance 
    
     first_term.id.value                                 # => 'HAO:1234'
  
@@ -30,20 +30,20 @@ A simple Ruby gem for parsing OBO 1.2 (?4) formatted ontology files.  Useful for
     o = first_term.other_tags                           # => [OboParser#Tag, ... ] An array of tags that are not specially referenced in an OboParser::Stanza
     o.first                                             # => An OboParser#Tag instance    
 
-    first_typedef = foo.typdefs.first                   # => An OboParser#Typdef instance 
+    first_typedef = o.typdefs.first                   # => An OboParser#Typdef instance 
     first_typdef.id.value                               # => 'Some typedef id'
     first_typdef.name.value                             # => 'Some typedef name'
 
-    foo.terms.first.tags_named('synonym')               # => [OboParser#Tag, ... ]
-    foo.terms.first.tags_named('synonym').first.tag     # => 'synonym'
-    foo.terms.first.tags_named('synonym').first.value   # => 'Some label'
+    o.terms.first.tags_named('synonym')               # => [OboParser#Tag, ... ]
+    o.terms.first.tags_named('synonym').first.tag     # => 'synonym'
+    o.terms.first.tags_named('synonym').first.value   # => 'Some label'
 
-    foo.terms.first.relationships                       # => [['relationship', 'FOO:123'], ['other_relationship', 'FOO:456'] ...] An array of [relation, related term id], includes 'is_a', 'disjoint_from' and Typedefs
+    o.terms.first.relationships                       # => [['relationship', 'FOO:123'], ['other_relationship', 'FOO:456'] ...] An array of [relation, related term id], includes 'is_a', 'disjoint_from' and Typedefs
 
 ### Convenience methods  
     
-    foo.term_hash                                       # => { term (String) => id (String), ... for each [Term] in the file. } !! Assumes names terms are unique, they might not be, in which case you get key collisions. 
-    foo.id_hash                                         # => { id (String) => term (String), ... for each [Term] in the file. } 
+    o.term_hash                                       # => { term (String) => id (String), ... for each [Term] in the file. } !! Assumes names terms are unique, they might not be, in which case you get key collisions. 
+    o.id_hash                                         # => { id (String) => term (String), ... for each [Term] in the file. } 
 
 See also /test/test_obo_parser.rb
 
@@ -51,9 +51,17 @@ See also /test/test_obo_parser.rb
 
 A small set of methods (e.g. comparing OBO ontologies) utilizing the gem are included in /lib/utilities.rb.  For example: 1) shared labels across sets of ontologies can be found and returned, 2) ontologies can be dumped into a simple Cytoscape node/edge format; 3) given a set of correspondances between two ontologies various reports can be made. 
 
+### Viz
+   
+    OboParser::Utilities::Viz.mock_coordinate_space(o, size: 100) # => STDOUT tab delimited table with x, y, z, identifier, label 
+
 ## Documentation
 
 Code documentation is slowly being formalized using Yard.
+
+## Contributing
+
+Fork, test, code, test, pull request.
 
 ## Copyright
 

@@ -7,10 +7,10 @@
 
 module OboParser
 
-  require File.expand_path(File.join(File.dirname(__FILE__), 'tokens'))
-  require File.expand_path(File.join(File.dirname(__FILE__), 'parser'))
-  require File.expand_path(File.join(File.dirname(__FILE__), 'lexer'))
-  require File.expand_path(File.join(File.dirname(__FILE__), 'utilities'))
+  require File.expand_path(File.join(File.dirname(__FILE__), 'obo_parser/tokens'))
+  require File.expand_path(File.join(File.dirname(__FILE__), 'obo_parser/parser'))
+  require File.expand_path(File.join(File.dirname(__FILE__), 'obo_parser/lexer'))
+  require File.expand_path(File.join(File.dirname(__FILE__), 'obo_parser/utilities'))
 
   class OboParser 
     attr_accessor :terms, :typedefs

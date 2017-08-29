@@ -66,11 +66,13 @@ module OboParser::Tokens
         qq = 0 # some failsafes
         while xref_list.length > 0
           qq += 1
-          debugger if qq == 499
-          raise "#{xref_list}" if qq > 500
+          raise "#{xref_list} is seemingly infinite" if qq > 500
           xref_list.gsub!(/\A\s*,\s*/, '')
 
-          xref_list =~ /\A(.+?:[^\"|\{|\,]+)/i 
+          xref_list =~ /\A(.+?:[^\"\{\,]+)/i 
+
+          # xref_list =~ /\A(.+?:[^\"|\{|\,]+)/i 
+
           v = $1
 
           if !(v == "") && !v.nil? 
@@ -79,7 +81,7 @@ module OboParser::Tokens
             xref_list.gsub!(/\A#{r}\s*/, '')
             @xrefs.push(v) if !v.nil?
           end
-         
+
           xref_list.strip!
 
           # A description
@@ -111,7 +113,7 @@ module OboParser::Tokens
       else
         @value = value.strip
       end
-      
+
       @value = @value[1..-2].strip if @value[0..0] == "\"" 
       @tag = tag.strip
       @value.strip!
@@ -137,7 +139,7 @@ module OboParser::Tokens
       @tag = 'relationship'
       @xrefs = [] 
       @relation, @related_term = str.split(/\s/,3)
-      
+
       str =~ /\s+!\s+(.*)\s*\n*/i
       @comment = $1
 
@@ -195,9 +197,22 @@ module OboParser::Tokens
     end
   end
 
+  # returns key => value hash for tokens like 'foo=bar' or foo = 'b a ar'
   # note we grab EOL and ; here 
   class ValuePair < Token
-    @regexp = Regexp.new(/\A\s*([\w\d\_\&]+\s*=\s*((\'[^\']+\')|(\(.*\))|(\"[^\"]+\")|([^\s\n\t;]+)))[\s\n\t;]+/i) #  returns key => value hash for tokens like 'foo=bar' or foo = 'b a ar'
+    @regexp = Regexp.new(
+      /\A\s*
+      ([\w\&]+\s*=\s*
+       (
+         (\'[^\']+\')|
+         (\(.*\))|
+         (\"[^\"]+\")|
+         ([^\s;]+)
+      )
+      )[\s;]+
+      /ix
+    ) 
+
     def initialize(str)
       str.strip!
       str = str.split(/=/)
@@ -221,35 +236,35 @@ module OboParser::Tokens
   #class LParen < Token
   #  @regexp = Regexp.new('\A\s*(\()\s*')
   #end
-  
+
   #class RBracket < Token
   #  @regexp = Regexp.new('\A\s*(\])\s*')
   #end
-  
+
   #class RParen < Token
   #  @regexp = Regexp.new('\A\s*(\))\s*')
   #end
-  
+
   #class Equals < Token
   #  @regexp = Regexp.new('\A\s*(=)\s*')
   #end
-  
+
   #class BckSlash < Token
   #  @regexp = Regexp.new('\A\s*(\/)\s*')
   #end
-  
+
   #class Colon < Token
   #  @regexp = Regexp.new('\A\s*(:)\s*')
   #end
-  
+
   #class SemiColon < Token
   #  @regexp = Regexp.new('\A\s*(;)\s*')
   #end
-  
+
   #class Comma < Token
   #  @regexp = Regexp.new('\A\s*(\,)\s*')
   #end
- 
+
   #class Number < Token
   #  @regexp = Regexp.new('\A\s*(-?\d+(\.\d+)?([eE][+-]?\d+)?)\s*')
   #  def initialize(str)
