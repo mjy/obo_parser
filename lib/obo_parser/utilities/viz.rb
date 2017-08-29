@@ -14,7 +14,7 @@ module OboParser
         edge_length = (size / 2) - (size * 0.2)
         total_terms = ontology.terms.size
         grid_length = Math.cbrt(total_terms).ceil.to_i
-        cutoff ||= size + 1
+        cutoff ||= data.count + 1
 
         data.each_with_index do |row, i|
           break if i > cutoff
