@@ -50,17 +50,13 @@ A simple Ruby gem for parsing OBO 1.2 (?4) formatted ontology files.  Useful for
 
 See also /test/test_obo_parser.rb
 
-## Utilties
+## Utilities
 
 A small set of methods (e.g. comparing OBO ontologies) utilizing the gem are included in /lib/utilities.rb.  For example: 1) shared labels across sets of ontologies can be found and returned, 2) ontologies can be dumped into a simple Cytoscape node/edge format; 3) given a set of correspondances between two ontologies various reports can be made. 
 
 ### Viz
    
     OboParser::Utilities::Viz.mock_coordinate_space(o, size: 100) # => STDOUT tab delimited table with x, y, z, identifier, label 
-
-## Documentation
-
-Code documentation is slowly being formalized using Yard.
 
 ## Contributing
 
