@@ -1,16 +1,16 @@
-# uses the PhyloTree parser/lexer engine by Krishna Dole which in turn was based on
+# Uses the PhyloTree parser/lexer engine by Krishna Dole which in turn was based on
 # Thomas Mailund's <mailund@birc.dk> 'newick-1.0.5' Python library
-
-#== Outstanding issues:
-# * Better documentation
-# * More tests
-
+#
+# A basic OBO file handling utility.
+#
 module OboParser
 
   require File.expand_path(File.join(File.dirname(__FILE__), 'obo_parser/tokens'))
   require File.expand_path(File.join(File.dirname(__FILE__), 'obo_parser/parser'))
   require File.expand_path(File.join(File.dirname(__FILE__), 'obo_parser/lexer'))
   require File.expand_path(File.join(File.dirname(__FILE__), 'obo_parser/utilities'))
+  require File.expand_path(File.join(File.dirname(__FILE__), 'obo_parser/utilities/viz'))
+  require File.expand_path(File.join(File.dirname(__FILE__), 'obo_parser/utilities/helpers'))
 
   class OboParser 
     attr_accessor :terms, :typedefs
@@ -27,7 +27,9 @@ module OboParser
 
     # Warning! This assumes terms are unique, they are NOT required to be so in an OBO file.
     # Ignores hash colisions!!
-    def term_hash # :yields: Hash (String => String) (name => id)
+    # @return [Hash]
+    #  (String => String) (name => id)
+    def term_hash
       @terms.inject({}) {|sum, t| sum.update(t.name.value => t.id.value)}
     end
 

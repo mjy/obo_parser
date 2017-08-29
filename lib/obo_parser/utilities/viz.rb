@@ -6,22 +6,18 @@ module OboParser
 
       # @params [ontology]
       #   the result of a parse_obo_file
-      def self.mock_coordinate_space(ontology, size: 20)
-
-        data = OboParser::Utilities::Helpers.simple_data(ontology)
+      def self.mock_coordinate_space(ontology, size: 20, cutoff: nil)
+        data = ::OboParser::Utilities::Helpers.simple_data(ontology)
 
         x,y,z = 1,1,1
         center_distance = ( size / 2) 
         edge_length = (size / 2) - (size * 0.2)
         total_terms = ontology.terms.size
-
         grid_length = Math.cbrt(total_terms).ceil.to_i
+        cutoff ||= size + 1
 
-        puts "size: #{size}"
-        # puts "edge_length: #{edge_length}"
-        puts "grid_length: #{grid_length}"
-
-        data.each do |row|
+        data.each_with_index do |row, i|
+          break if i > cutoff
           print x * center_distance
           print "\t"
           print y * center_distance
@@ -45,7 +41,9 @@ module OboParser
             z = z + 1
           end
         end
+        true
       end
+      
     end
   end
 end

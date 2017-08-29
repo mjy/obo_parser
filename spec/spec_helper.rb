@@ -6,6 +6,7 @@ require 'obo_parser'
 require 'pry'
 require 'awesome_print'
 require 'fileutils'
+require "stringio"
 
 # FileUtils::mkdir_p 'tmp'
 
@@ -28,5 +29,14 @@ end
 #   # value is a scalar for testing against the range, percentage is a float less than 1, midpoint is the nominal center of the range
 #   return (value <= midpoint*(1.0 + percentage)) & (value >= midpoint*(1.0 - percentage))
 # end
+
+# https://stackoverflow.com/questions/4459330/how-do-i-temporarily-redirect-stderr-in-ruby
+def capture_stderr
+  previous_stdout, $stdout = $stdout, StringIO.new
+  yield
+  $stdout.string
+ensure
+  $stdout = previous_stdout
+end
 
 

@@ -1,3 +1,6 @@
+
+[https://secure.travis-ci.org/mjy/obo_parser.png?branch=master](http://travis-ci.org/mjy/obo_parser?branch=master)
+
 # obo_parser
 
 A simple Ruby gem for parsing OBO 1.2 (?4) formatted ontology files.  Useful for reporting, comparing, and mapping data to other databases.  There is presently no functionality for logical inference across the ontology.
